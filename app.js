@@ -568,8 +568,10 @@ function emptyState(message) {
 }
 
 function renderClientOptions() {
-  const options = state.clients
-    .map((client) => `<option value="${escapeHtml(client.id)}">${escapeHtml(client.name)}</option>`)
+  // Use the same source as the Clients tab so the diet/progress pickers only
+  // ever list clients that are actually visible under "Registered clients".
+  const options = getAllRegisteredClients()
+    .map((client) => `<option value="${escapeHtml(client.id)}">${escapeHtml(client.name || client.email || "Client")}</option>`)
     .join("");
   el("dietClient").innerHTML = options || `<option value="">Add a client first</option>`;
   el("progressClient").innerHTML = options || `<option value="">Add a client first</option>`;
