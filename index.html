@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Fit Geek Fitness CRM</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="auth-shell" id="authShell">
+      <div class="auth-brand-panel">
+        <div class="brand auth-brand">
+          <div class="brand-mark">FG</div>
+          <div>
+            <strong>The Fit Geek</strong>
+            <span>Coach and client portal</span>
+          </div>
+        </div>
+        <h1>Manage fitness journeys with clean client data.</h1>
+        <p>
+          Sign in to access your fitness dashboard, diet charts, yoga history,
+          muscle exercises, and progress details.
+        </p>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-tabs" role="tablist" aria-label="Authentication">
+          <button class="auth-tab active" id="loginTab" type="button" data-auth-view="login">Login</button>
+          <button class="auth-tab" id="signupTab" type="button" data-auth-view="signup">Sign up</button>
+        </div>
+
+        <form class="auth-form active" id="loginForm">
+          <div>
+            <p class="eyebrow">Welcome back</p>
+            <h2>Login</h2>
+          </div>
+          <label>
+            Email address or Admin ID
+            <input id="loginEmail" autocomplete="username" required placeholder="you@example.com or Admin" />
+          </label>
+          <label>
+            Password
+            <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter password" />
+          </label>
+          <label class="check-row">
+            <input id="rememberMe" type="checkbox" />
+            <span>Remember me</span>
+          </label>
+          <button class="primary-button" type="submit">Login</button>
+          <p class="auth-message" id="loginMessage"></p>
+        </form>
+
+        <form class="auth-form" id="signupForm">
+          <div>
+            <p class="eyebrow">New profile</p>
+            <h2>Sign up</h2>
+          </div>
+          <div class="form-row">
+            <label>
+              Full name
+              <input id="signupName" required autocomplete="name" placeholder="Client name" />
+            </label>
+            <label>
+              Age
+              <input id="signupAge" type="number" min="12" max="90" required />
+            </label>
+          </div>
+          <div class="form-row">
+            <label>
+              Gender
+              <select id="signupGender" required>
+                <option value="">Select</option>
+                <option>Female</option>
+                <option>Male</option>
+              </select>
+            </label>
+            <label>
+              Fitness goal
+              <select id="signupGoal" required>
+                <option>Fat loss</option>
+                <option>Muscle gain</option>
+                <option>Recomposition</option>
+                <option>Strength</option>
+                <option>General wellness</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label>
+              Current weight (kg)
+              <input id="signupWeight" type="number" min="25" max="250" step="0.1" required />
+            </label>
+            <label>
+              Height (cm)
+              <input id="signupHeight" type="number" min="90" max="250" step="0.1" required />
+            </label>
+          </div>
+          <div class="form-row">
+            <label>
+              Activity level
+              <select id="signupActivity" required>
+                <option>Sedentary</option>
+                <option>Lightly active</option>
+                <option>Moderately active</option>
+                <option>Very active</option>
+                <option>Athlete</option>
+              </select>
+            </label>
+            <label>
+              Phone number
+              <input id="signupPhone" type="tel" placeholder="Optional" />
+            </label>
+          </div>
+          <label>
+            Medical conditions or injuries
+            <textarea id="signupMedical" rows="3" placeholder="Diabetes, thyroid, PCOD, knee pain, allergies, etc."></textarea>
+          </label>
+          <label>
+            Email address
+            <input id="signupEmail" type="email" autocomplete="email" required placeholder="you@example.com" />
+          </label>
+          <label>
+            Password
+            <input id="signupPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Minimum 6 characters" />
+          </label>
+          <button class="primary-button" type="submit">Create account</button>
+          <p class="auth-message" id="signupMessage"></p>
+        </form>
+      </div>
+    </section>
+
+    <div class="app-shell locked" id="appShell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">FG</div>
+          <div>
+            <strong>The Fit Geek</strong>
+            <span>Fitness CRM</span>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav-item active" data-section="dashboard" type="button">
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-section="clients" data-owner-only type="button">
+            <span>Clients</span>
+          </button>
+          <button class="nav-item" data-section="diet" type="button">
+            <span>Diet Charts</span>
+          </button>
+          <button class="nav-item" data-section="progress" data-owner-only type="button">
+            <span>Progress</span>
+          </button>
+          <button class="nav-item" data-section="yoga" type="button">
+            <span>Yoga History</span>
+          </button>
+          <button class="nav-item" data-section="exercises" type="button">
+            <span>Muscle Exercises</span>
+          </button>
+        </nav>
+
+        <div class="coach-card">
+          <span>Signed in as</span>
+          <strong id="accountName">Account</strong>
+          <p id="modePill">Client Mode</p>
+          <button class="sidebar-logout" id="logoutBtn" type="button">Logout</button>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Coach operations</p>
+            <h1>Client, diet, progress, and yoga manager</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="primary-button" data-section-target="clients" data-owner-only type="button">Add client</button>
+          </div>
+        </header>
+
+        <section class="section active" id="dashboard">
+          <div class="stats-grid">
+            <article class="stat" data-owner-only>
+              <span>Active clients</span>
+              <strong id="activeClients">0</strong>
+            </article>
+            <article class="stat">
+              <span>Avg. weekly change</span>
+              <strong id="avgChange">0 kg</strong>
+            </article>
+            <article class="stat">
+              <span>Diet charts</span>
+              <strong id="dietChartCount">0</strong>
+            </article>
+            <article class="stat" data-owner-only>
+              <span>Follow-ups due</span>
+              <strong id="followupsDue">0</strong>
+            </article>
+          </div>
+
+          <section class="panel client-dashboard-panel" id="clientDashboardPanel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">My fitness profile</p>
+                <h2 id="clientDashboardName">Client overview</h2>
+              </div>
+            </div>
+            <div class="owner-profile" id="clientProfileCards"></div>
+          </section>
+
+          <div class="dashboard-layout">
+            <section class="panel client-only-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Nutrition</p>
+                  <h2>Macro split</h2>
+                </div>
+              </div>
+              <div class="macro-visual">
+                <div class="macro-ring" id="macroRing">
+                  <span id="macroCalories">0</span>
+                  <small>kcal avg</small>
+                </div>
+                <div class="macro-bars" id="macroBars"></div>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel owner-panel" data-owner-only>
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Owner review</p>
+                <h2>Signup Details</h2>
+              </div>
+            </div>
+            <div class="owner-profile" id="ownerProfile"></div>
+          </section>
+        </section>
+
+        <section class="section" id="clients">
+          <div class="content-grid">
+            <section class="panel list-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Registered clients</p>
+                  <h2>Signed up clients</h2>
+                </div>
+              </div>
+              <div class="client-list" id="registeredClientsList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="section" id="diet">
+          <div class="content-grid">
+            <form class="panel form-panel" id="dietForm" data-owner-only>
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Meal plan</p>
+                  <h2>Create diet chart</h2>
+                </div>
+              </div>
+              <label>
+                Client
+                <select id="dietClient" required></select>
+              </label>
+              <div class="form-row">
+                <label>
+                  Calories
+                  <input id="dietCalories" type="number" min="800" max="6000" step="10" required />
+                </label>
+                <label>
+                  Plan type
+                  <select id="dietType">
+                    <option>Balanced</option>
+                    <option>High protein</option>
+                    <option>Vegetarian</option>
+                    <option>Low carb</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Protein (g)
+                  <input id="dietProtein" type="number" min="20" max="400" required />
+                </label>
+                <label>
+                  Carbs (g)
+                  <input id="dietCarbs" type="number" min="20" max="700" required />
+                </label>
+                <label>
+                  Fat (g)
+                  <input id="dietFat" type="number" min="10" max="250" required />
+                </label>
+              </div>
+              <label>
+                Meals
+                <textarea id="dietMeals" rows="7" required placeholder="Breakfast:&#10;Lunch:&#10;Snack:&#10;Dinner:"></textarea>
+              </label>
+              <button class="primary-button" type="submit">Save diet chart</button>
+            </form>
+
+            <section class="panel list-panel" id="adminDietRequestsPanel" data-owner-only>
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Client requests</p>
+                  <h2>Meal plan requests</h2>
+                </div>
+              </div>
+              <div class="diet-list" id="adminDietRequests"></div>
+            </section>
+
+            <form class="panel form-panel client-diet-request" id="dietRequestForm">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Meal plan request</p>
+                  <h2>Ask Admin for a diet chart</h2>
+                </div>
+              </div>
+              <label>
+                Request note
+                <textarea id="dietRequestNote" rows="5" placeholder="Tell Admin your food preference, schedule, allergies, or goal change."></textarea>
+              </label>
+              <button class="primary-button" type="submit">Send request</button>
+              <p class="auth-message" id="dietRequestMessage"></p>
+            </form>
+
+            <section class="panel list-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Library</p>
+                  <h2 id="dietListTitle">Saved charts</h2>
+                </div>
+              </div>
+              <div class="diet-list" id="dietList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="section" id="progress">
+          <div class="content-grid">
+            <form class="panel form-panel" id="progressForm">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Check-in</p>
+                  <h2>Record progress</h2>
+                </div>
+              </div>
+              <label>
+                Client
+                <select id="progressClient" required></select>
+              </label>
+              <div class="form-row">
+                <label>
+                  Date
+                  <input id="progressDate" type="date" required />
+                </label>
+                <label>
+                  Weight (kg)
+                  <input id="progressWeight" type="number" min="25" max="250" step="0.1" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>
+                  Waist (cm)
+                  <input id="progressWaist" type="number" min="30" max="220" step="0.1" />
+                </label>
+                <label>
+                  Adherence (%)
+                  <input id="progressAdherence" type="number" min="0" max="100" value="80" />
+                </label>
+              </div>
+              <label>
+                Check-in notes
+                <textarea id="progressNotes" rows="4" placeholder="Training, hunger, sleep, next action"></textarea>
+              </label>
+              <button class="primary-button" type="submit">Save check-in</button>
+            </form>
+
+            <section class="panel list-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Timeline</p>
+                  <h2>Progress history</h2>
+                </div>
+              </div>
+              <div class="progress-list" id="progressList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="section" id="yoga">
+          <div class="yoga-layout">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Yoga reference</p>
+                  <h2>Asana history and names</h2>
+                </div>
+                <input class="search-input" id="asanaSearch" placeholder="Search asanas" />
+              </div>
+              <div class="filter-row" id="asanaFilters"></div>
+              <div class="asana-grid" id="asanaGrid"></div>
+            </section>
+
+            <aside class="panel yoga-note">
+              <p class="eyebrow">Client use</p>
+              <h2>How to refer</h2>
+              <p>
+                Use this as a quick library while assigning mobility, flexibility, balance,
+                or breathing work. Start beginners with simple standing and seated poses,
+                then progress slowly based on comfort and medical history.
+              </p>
+              <div class="note-list">
+                <span>Warm up before deep stretches</span>
+                <span>Avoid pain or forced range</span>
+                <span>Modify for injury, pregnancy, or dizziness</span>
+                <span>Use professional supervision for advanced inversions</span>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="section" id="exercises">
+          <div class="yoga-layout">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Strength library</p>
+                  <h2>Muscle exercises</h2>
+                </div>
+                <input class="search-input" id="exerciseSearch" placeholder="Search exercises" />
+              </div>
+              <div class="filter-row" id="exerciseFilters"></div>
+              <div class="asana-grid" id="exerciseGrid"></div>
+            </section>
+
+            <aside class="panel yoga-note">
+              <p class="eyebrow">Client use</p>
+              <h2>Exercise reference</h2>
+              <p>
+                Assign exercises by target muscle, equipment, and client skill level. Each
+                exercise card opens only your provided local tutorial video.
+              </p>
+              <div class="note-list">
+                <span>Teach form before increasing load</span>
+                <span>Use controlled range of motion</span>
+                <span>Stop if sharp pain appears</span>
+                <span>Progress sets, reps, or weight gradually</span>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="video-modal" id="videoModal" aria-hidden="true">
+      <div class="video-dialog" role="dialog" aria-modal="true" aria-labelledby="videoTitle">
+        <div class="video-header">
+          <div>
+            <p class="eyebrow" id="videoEyebrow">Tutorial</p>
+            <h2 id="videoTitle">Exercise video</h2>
+            <p id="videoSubtitle"></p>
+          </div>
+          <button class="icon-button" id="closeVideoBtn" type="button" title="Close video">X</button>
+        </div>
+        <div class="video-frame-wrap">
+          <video
+            id="asanaVideo"
+            controls
+            preload="metadata"
+          ></video>
+          <div class="video-missing" id="videoMissing">
+            <strong>Video not added yet</strong>
+            <span>Add the provided video file for this asana in the local videos folder.</span>
+          </div>
+        </div>
+        <div class="video-actions">
+          <span id="videoFileName">Local video only</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+      const script = document.createElement('script');
+      script.src = `app.js?v=${Date.now()}`;
+      script.defer = true;
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

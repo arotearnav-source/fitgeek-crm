@@ -1,0 +1,21 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Local database & logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Build / deploy artifacts (generated, not source)
+dist/
+fitgeek-site.zip
+
+# Agent / tooling scratch
+.agents/
+
+# OS junk
+.DS_Store
+Thumbs.db
