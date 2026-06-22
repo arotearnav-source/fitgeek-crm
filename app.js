@@ -367,25 +367,17 @@ function getAllRegisteredClients() {
     .filter((user) => user.role !== "admin")
     .map((user) => ({ id: user.id, name: user.name, email: user.email, phone: user.phone || "", role: user.role || "client", createdAt: user.createdAt || "" }));
 
-  const usersFromState = (state.clients || []).map((client) => ({
-    id: client.id,
-    name: client.name,
-    email: client.email,
-    phone: client.phone || "",
-    role: "client",
-    createdAt: client.createdAt || ""
-  }));
-
   const normEmail = (value) => String(value || "").trim().toLowerCase();
   const normName = (value) => String(value || "").trim().toLowerCase();
 
+  // Only real registered ACCOUNTS are listed: synced cloud signups and local
+  // auth users. Local-only "profile clients" (state.clients) are intentionally
+  // NOT added here — they are used solely to backfill details (e.g. phone) for
+  // an account that already exists.
   const merged = [];
-  [...usersFromCloud, ...usersFromAuth, ...usersFromState].forEach((item) => {
+  [...usersFromCloud, ...usersFromAuth].forEach((item) => {
     const email = normEmail(item.email);
     const name = normName(item.name);
-    // Treat records as the same client when they share a real email, the same
-    // id, or (when no email is recorded) the same name — this collapses the
-    // duplicate signup/profile rows that previously showed up multiple times.
     const existing = merged.find((entry) => {
       const entryEmail = normEmail(entry.email);
       if (email && entryEmail && entryEmail === email) return true;
@@ -403,6 +395,25 @@ function getAllRegisteredClients() {
       existing.role = existing.role || item.role;
     } else {
       merged.push({ ...item });
+    }
+  });
+
+  // Backfill from the local profile that mirrors each account. We also adopt
+  // the profile's id so that diet.clientId / progress.clientId (which resolve
+  // via clientById() against state.clients) keep pointing at a real profile.
+  // We never add a new entry from state — only enrich an existing account.
+  (state.clients || []).forEach((client) => {
+    const email = normEmail(client.email);
+    const match = merged.find((entry) => {
+      if (email && normEmail(entry.email) === email) return true;
+      if (!email && client.id && entry.id === client.id) return true;
+      return false;
+    });
+    if (match) {
+      if (client.id) match.id = client.id;
+      match.phone = match.phone || client.phone || "";
+      match.name = match.name || client.name;
+      match.createdAt = match.createdAt || client.createdAt;
     }
   });
 
