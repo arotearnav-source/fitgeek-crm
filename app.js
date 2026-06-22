@@ -374,9 +374,25 @@ function getAllRegisteredClients() {
     createdAt: client.createdAt || ""
   }));
 
+  const normEmail = (value) => String(value || "").trim().toLowerCase();
+  const normName = (value) => String(value || "").trim().toLowerCase();
+
   const merged = [];
   [...usersFromCloud, ...usersFromAuth, ...usersFromState].forEach((item) => {
-    const existing = merged.find((entry) => entry.email === item.email || entry.id === item.id || (item.name && entry.name === item.name));
+    const email = normEmail(item.email);
+    const name = normName(item.name);
+    // Treat records as the same client when they share a real email, the same
+    // id, or (when no email is recorded) the same name — this collapses the
+    // duplicate signup/profile rows that previously showed up multiple times.
+    const existing = merged.find((entry) => {
+      const entryEmail = normEmail(entry.email);
+      if (email && entryEmail && entryEmail === email) return true;
+      if (item.id && entry.id && entry.id === item.id) return true;
+      // Same name collapses duplicates unless BOTH sides have distinct real
+      // emails (i.e. they are genuinely different accounts).
+      if (name && normName(entry.name) === name && !(email && entryEmail)) return true;
+      return false;
+    });
     if (existing) {
       existing.name = existing.name || item.name;
       existing.email = existing.email || item.email;
@@ -796,57 +812,13 @@ function renderOwnerProfile() {
     return;
   }
 
-  // If admin, list all registered accounts for review
+  // If admin, show a compact summary only. The full client list (with the
+  // Delete action) lives in the Clients tab — see renderRegisteredClientsList().
   if (currentUserRole() === "admin") {
-    const usersFromAuth = (authState.users || [])
-      .filter((u) => u.role !== "admin")
-      .map((u) => ({ id: u.id, name: u.name, email: u.email, role: u.role || "client", createdAt: u.createdAt || "" }));
-
-    const usersFromClients = (state.clients || [])
-      .filter((c) => c.email || c.name)
-      .map((c) => ({ id: c.id, name: c.name, email: c.email, role: "client", createdAt: c.createdAt || "" }));
-
-    const merged = [...usersFromAuth, ...usersFromClients].reduce((acc, item) => {
-      const key = item.email || item.name || item.id;
-      const existing = acc.find((entry) => entry.email === item.email || entry.name === item.name || entry.id === item.id);
-      if (existing) {
-        existing.name = existing.name || item.name;
-        existing.email = existing.email || item.email;
-        existing.createdAt = existing.createdAt || item.createdAt;
-        existing.role = existing.role || item.role;
-      } else {
-        acc.push(item);
-      }
-      return acc;
-    }, []);
-
-    const others = merged.sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
-
+    const registered = getAllRegisteredClients();
     el("ownerProfile").innerHTML = `
       <div class="owner-field"><span>Admin</span><strong>${escapeHtml(user.name || user.username || "Admin")}</strong></div>
-      <div class="owner-field"><span>Registered accounts</span><strong>${others.length}</strong></div>
-      <div class="signup-list">
-        ${
-          others.length
-            ? others
-                .map(
-                  (u) => `
-                    <article class="signup-row">
-                      <div>
-                        <p class="card-title">${escapeHtml(u.name || u.username || "-")}</p>
-                        <p class="card-meta">${escapeHtml(u.email || "-")} · ${escapeHtml(u.createdAt || "-")}</p>
-                      </div>
-                      <div class="tag-row">
-                        <span class="tag">${escapeHtml(u.role || "client")}</span>
-                        <button class="danger-button" type="button" data-delete-registered-account="${escapeHtml(u.email || u.id || "")}">Delete</button>
-                      </div>
-                    </article>
-                  `
-                )
-                .join("")
-            : `<div class="empty-state">No registered accounts yet.</div>`
-        }
-      </div>
+      <div class="owner-field"><span>Registered accounts</span><strong>${registered.length}</strong></div>
     `;
     return;
   }
