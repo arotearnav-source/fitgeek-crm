@@ -358,18 +358,20 @@ function getAllRegisteredClients() {
     id: row.id != null ? String(row.id) : String(row.email || ""),
     name: row.name,
     email: String(row.email || "").toLowerCase(),
+    phone: row.phone || "",
     role: "client",
     createdAt: String(row.created_at || "").slice(0, 10)
   }));
 
   const usersFromAuth = (authState.users || [])
     .filter((user) => user.role !== "admin")
-    .map((user) => ({ id: user.id, name: user.name, email: user.email, role: user.role || "client", createdAt: user.createdAt || "" }));
+    .map((user) => ({ id: user.id, name: user.name, email: user.email, phone: user.phone || "", role: user.role || "client", createdAt: user.createdAt || "" }));
 
   const usersFromState = (state.clients || []).map((client) => ({
     id: client.id,
     name: client.name,
     email: client.email,
+    phone: client.phone || "",
     role: "client",
     createdAt: client.createdAt || ""
   }));
@@ -396,6 +398,7 @@ function getAllRegisteredClients() {
     if (existing) {
       existing.name = existing.name || item.name;
       existing.email = existing.email || item.email;
+      existing.phone = existing.phone || item.phone;
       existing.createdAt = existing.createdAt || item.createdAt;
       existing.role = existing.role || item.role;
     } else {
@@ -422,7 +425,8 @@ function ensureClientProfilesFromAuth() {
           target: Number(user.weight) || 0,
           notes: `Signup profile · ${user.gender || "Unspecified"} · ${user.height ? `${user.height} cm` : "Height unknown"} · ${user.activity || "Activity unknown"}.`,
           createdAt: user.createdAt || today,
-          email: user.email
+          email: user.email,
+          phone: user.phone || ""
         });
         changed = true;
       }
@@ -456,7 +460,8 @@ function ensureClientProfilesFromCloud() {
         target: Number(row.weight) || 0,
         notes: `Signup profile · ${row.gender || "Unspecified"} · ${row.height ? `${row.height} cm` : "Height unknown"} · ${row.activity || "Activity unknown"}.`,
         createdAt: String(row.created_at || "").slice(0, 10) || today,
-        email
+        email,
+        phone: row.phone || ""
       });
       changed = true;
     }
@@ -1064,7 +1069,8 @@ function addSignupClient(user) {
     target: Number(user.weight),
     notes: `Signup profile · ${user.gender} · ${user.height} cm · ${user.activity}. Medical: ${user.medical || "None added"}`,
     createdAt: today,
-    email: user.email
+    email: user.email,
+    phone: user.phone || ""
   });
   saveState();
   console.debug("Saved client via signup, state.clients:", state.clients);
@@ -1086,12 +1092,17 @@ function renderRegisteredClientsList() {
             (client) => {
               const deleteKey = client.email || client.id;
               const label = client.name || client.email || "client";
+              const phone = client.phone || "";
+              const phoneLine = phone
+                ? `<p class="card-meta">📞 <a href="tel:${escapeHtml(phone.replace(/[^+\d]/g, ""))}">${escapeHtml(phone)}</a></p>`
+                : `<p class="card-meta">📞 No phone on file</p>`;
               return `
               <article class="client-card">
                 <div class="avatar">${escapeHtml((client.name || client.email || "?").charAt(0).toUpperCase())}</div>
                 <div>
                   <p class="card-title">${escapeHtml(client.name || client.email || "-")}</p>
                   <p class="card-meta">${escapeHtml(client.email || "-")} · ${escapeHtml(client.createdAt || "-")}</p>
+                  ${phoneLine}
                 </div>
                 <div class="card-actions">
                   <button class="icon-button" type="button" style="width:auto;padding:0 14px;color:#9b2d1d;border-color:#e3b7af" title="Permanently delete this client" data-delete-registered-account="${escapeHtml(deleteKey)}" data-client-name="${escapeHtml(label)}">Delete</button>
@@ -1298,6 +1309,16 @@ function importAppData(file) {
 el("signupForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const email = el("signupEmail").value.trim().toLowerCase();
+  const phone = el("signupPhone").value.trim();
+
+  if (!phone) {
+    setAuthMessage("signupMessage", "Phone number is required so your coach can reach you.", true);
+    try {
+      el("signupPhone").focus();
+    } catch {}
+    return;
+  }
+
   const existing = authState.users.some((user) => user.email === email);
 
   if (existing) {
@@ -1322,7 +1343,7 @@ el("signupForm").addEventListener("submit", (event) => {
     weight: Number(el("signupWeight").value),
     height: Number(el("signupHeight").value),
     activity: el("signupActivity").value,
-    phone: el("signupPhone").value.trim(),
+    phone,
     medical: el("signupMedical").value.trim(),
     email,
     password: el("signupPassword").value,
