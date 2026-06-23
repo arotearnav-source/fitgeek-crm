@@ -4,6 +4,27 @@ const sessionStoreKey = "the-fit-geek-session-active";
 const rememberStoreKey = "the-fit-geek-remember-login";
 const rememberCredentialsKey = "the-fit-geek-remember-credentials-v1";
 const appVersion = "v3";
+
+// Admin login is verified against this SHA-256 hash, so the real password is
+// never written in the (public) source. Change it with the helper below or ask
+// to have it regenerated.
+const ADMIN_PASSWORD_SHA256 = "c7a8a1884b0128b00e8573f44044881a9b49d65ea98e1a4c71ea808f8b1c09d0";
+
+async function sha256Hex(text) {
+  const bytes = new TextEncoder().encode(String(text));
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// A random, un-typeable value used as the admin profile's stored password, so
+// nobody can reach the admin account through the normal email+password path —
+// admin login only succeeds via the hashed check above.
+function adminPlaceholderSecret() {
+  const rnd = () => (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2));
+  return `locked-${rnd()}-${rnd()}`;
+}
 const asanas = [
   ["Tadasana", "Mountain Pose", "Standing", "Foundation for posture, balance, and breath awareness."],
   ["Urdhva Hastasana", "Upward Salute", "Standing", "Lengthens the front body and improves shoulder mobility."],
@@ -542,7 +563,7 @@ function ensureAdminAccount() {
       phone: "",
       medical: "",
       email: "admin@thefitgeek.local",
-      password: "123456",
+      password: adminPlaceholderSecret(),
       provider: "Admin",
       role: "admin",
       createdAt: today
@@ -550,7 +571,10 @@ function ensureAdminAccount() {
     authState.users.push(admin);
   } else {
     admin.username = "Admin";
-    admin.password = "123456";
+    // Migrate away from the old hard-coded password and never store a usable one.
+    if (!admin.password || admin.password === "123456") {
+      admin.password = adminPlaceholderSecret();
+    }
     admin.role = "admin";
     admin.provider = "Admin";
   }
@@ -1209,12 +1233,13 @@ el("videoModal").addEventListener("click", (event) => {
 });
 el("progressDate").value = today;
 
-el("loginForm").addEventListener("submit", (event) => {
+el("loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const loginId = el("loginEmail").value.trim();
   const email = loginId.toLowerCase();
   const password = el("loginPassword").value;
-  const adminLogin = (email === "admin" || email === "admin@thefitgeek.local") && password === "123456";
+  const isAdminId = email === "admin" || email === "admin@thefitgeek.local";
+  const adminLogin = isAdminId && (await sha256Hex(password)) === ADMIN_PASSWORD_SHA256;
   const user = adminLogin
     ? ensureAdminAccount()
     : authState.users.find((item) => item.email === email && item.password === password);
