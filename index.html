@@ -29,18 +29,18 @@
           <button class="auth-tab" id="signupTab" type="button" data-auth-view="signup">Sign up</button>
         </div>
 
-        <form class="auth-form active" id="loginForm">
+        <form class="auth-form active" id="loginForm" autocomplete="off">
           <div>
             <p class="eyebrow">Welcome back</p>
             <h2>Login</h2>
           </div>
           <label>
             Email address or Admin ID
-            <input id="loginEmail" autocomplete="username" required placeholder="you@example.com or Admin" />
+            <input id="loginEmail" autocomplete="off" required placeholder="you@example.com or Admin" />
           </label>
           <label>
             Password
-            <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter password" />
+            <input id="loginPassword" type="password" autocomplete="off" required placeholder="Enter password" />
           </label>
           <label class="check-row">
             <input id="rememberMe" type="checkbox" />

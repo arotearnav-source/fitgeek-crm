@@ -1374,9 +1374,12 @@ el("signupForm").addEventListener("submit", (event) => {
 
   authState.users.push(user);
   authState.currentUserId = user.id;
+  // Log in for THIS session only. Never silently persist the password or
+  // auto-remember on signup — credentials are saved only when the user later
+  // ticks "Remember me" at login, and only on that device.
   sessionStorage.setItem(sessionStoreKey, "true");
-  localStorage.setItem(rememberStoreKey, "true");
-  saveRememberedCredentials(email, user.password);
+  localStorage.removeItem(rememberStoreKey);
+  removeRememberedCredentials();
   saveAuthState();
   addSignupClient(user);
   cloudUpsertClient(user);
