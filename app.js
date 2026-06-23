@@ -1320,10 +1320,19 @@ function importAppData(file) {
 el("signupForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const email = el("signupEmail").value.trim().toLowerCase();
-  const phone = el("signupPhone").value.trim();
+  // Keep digits only, then require exactly 10 (no country code / spaces / symbols).
+  const phone = el("signupPhone").value.replace(/\D/g, "");
 
   if (!phone) {
     setAuthMessage("signupMessage", "Phone number is required so your coach can reach you.", true);
+    try {
+      el("signupPhone").focus();
+    } catch {}
+    return;
+  }
+
+  if (phone.length !== 10) {
+    setAuthMessage("signupMessage", "Please enter a valid phone number — exactly 10 digits.", true);
     try {
       el("signupPhone").focus();
     } catch {}
