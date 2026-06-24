@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="The Fit Geek — Your Lifestyle Coach">
+  <rect width="200" height="200" rx="14" fill="#1c1c1c"/>
+  <circle cx="100" cy="100" r="86" fill="#e23a18"/>
+  <!-- Dumbbell -->
+  <g fill="#ffffff">
+    <rect x="58" y="58" width="10" height="26" rx="3"/>
+    <rect x="70" y="52" width="11" height="38" rx="3"/>
+    <rect x="119" y="52" width="11" height="38" rx="3"/>
+    <rect x="132" y="58" width="10" height="26" rx="3"/>
+    <rect x="81" y="66" width="38" height="10" rx="3"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="100" y="118" text-anchor="middle" fill="#ffffff"
+        font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="30" letter-spacing="1">THE FIT</text>
+  <text x="100" y="148" text-anchor="middle" fill="#ffffff"
+        font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="30" letter-spacing="1">GEEK</text>
+  <!-- Tagline -->
+  <text x="100" y="168" text-anchor="middle" fill="#f4d2c4" font-family="Arial, Helvetica, sans-serif"
+        font-weight="600" font-size="9" letter-spacing="2">YOUR LIFESTYLE COACH</text>
+</svg>
