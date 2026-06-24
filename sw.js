@@ -2,13 +2,14 @@
 // Strategy: network-first for the app's own files (so new deploys show up
 // immediately), falling back to the cached copy only when offline. Supabase
 // and other cross-origin/non-GET requests are never cached.
-const CACHE = "fitgeek-shell-v1";
+const CACHE = "fitgeek-shell-v2";
 const SHELL = [
   "./",
   "./index.html",
   "./app.js",
   "./styles.css",
   "./supabase-config.js",
+  "./logo.svg",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
