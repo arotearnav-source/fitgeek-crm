@@ -2,15 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>The Fit Geek Fitness CRM</title>
     <link rel="stylesheet" href="styles.css" />
+
+    <!-- Progressive Web App (installable on phones) -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#14795b" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Fit Geek" />
+    <meta name="mobile-web-app-capable" content="yes" />
   </head>
   <body>
     <section class="auth-shell" id="authShell">
       <div class="auth-brand-panel">
         <div class="brand auth-brand">
-          <div class="brand-mark">FG</div>
+          <img class="brand-mark" src="logo.svg" alt="The Fit Geek" />
           <div>
             <strong>The Fit Geek</strong>
             <span>Coach and client portal</span>
@@ -132,7 +141,7 @@
     <div class="app-shell locked" id="appShell">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">FG</div>
+          <img class="brand-mark" src="logo.svg" alt="The Fit Geek" />
           <div>
             <strong>The Fit Geek</strong>
             <span>Fitness CRM</span>
@@ -488,6 +497,16 @@
       script.src = `app.js?v=${Date.now()}`;
       script.defer = true;
       document.body.appendChild(script);
+    </script>
+    <script>
+      // Register the service worker so the app is installable + works offline.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch((err) => {
+            console.warn('Service worker registration failed:', err);
+          });
+        });
+      }
     </script>
   </body>
 </html>
