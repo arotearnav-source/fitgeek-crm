@@ -351,6 +351,7 @@ async function syncCloudClients() {
     if (currentUser()) {
       renderRegisteredClientsList();
       renderDashboard();
+      renderOwnerProfile();
       // Only rebuild the diet/progress client pickers when a new client
       // actually arrived, so we don't reset the admin's current selection.
       if (newClientsAdded) {
